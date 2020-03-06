@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemInfoSensor", "SystemInfoSensor\SystemInfoSensor.csproj", "{5E11093F-0552-444B-A195-498C3C2D3ADF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E11093F-0552-444B-A195-498C3C2D3ADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E11093F-0552-444B-A195-498C3C2D3ADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E11093F-0552-444B-A195-498C3C2D3ADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E11093F-0552-444B-A195-498C3C2D3ADF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52EF4CC6-C952-4112-9CBC-C90FE9732BBD}
+	EndGlobalSection
+EndGlobal
