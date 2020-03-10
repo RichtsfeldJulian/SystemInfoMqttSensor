@@ -3,7 +3,7 @@
     class SystemInfo
     {
         public string Id { get; set; }
-        public string Cpu { get; set; }
-        public string Ram { get; set; }
+        public Cpu Cpu { get; set; }
+        public Ram Ram { get; set; }
     }
 }
