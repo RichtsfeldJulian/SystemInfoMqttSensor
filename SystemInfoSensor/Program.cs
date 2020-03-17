@@ -49,7 +49,7 @@ namespace SystemInfoSensor
                     Ram = new Ram
                     {
                         Used = Math.Round(ramCounter.NextValue()),
-                        Max = 16000
+                        Max = 16009
                     }
                 });
 
