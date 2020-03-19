@@ -47,20 +47,23 @@ namespace SystemInfoSensor
 
                 System.Threading.Thread.Sleep(1000);
 
-                string payload = JsonConvert.SerializeObject(new SystemInfo
+                string payload = JsonConvert.SerializeObject(new Measurement
                 {
-                    Id = Environment.MachineName,
-                    Cpu = new Cpu
-                    {
-                        Baseclock = Convert.ToInt32(Math.Round(frequencyCounter.NextValue())),
-                        Currentclock = Convert.ToInt32(Math.Round(frequencyCounter.NextValue() * (powerCounter.NextValue() / 100))),
-                        Utilisation = Convert.ToInt32(Math.Round(cpuCounter.NextValue()))
+                    SystemInfo = new SystemInfo { 
+                        Name = Environment.MachineName, 
+                        Cpu = new Cpu
+                        {
+                            Baseclock = Convert.ToInt32(Math.Round(frequencyCounter.NextValue())),
+                            Currentclock = Convert.ToInt32(Math.Round(frequencyCounter.NextValue() * (powerCounter.NextValue() / 100))),
+                            Utilisation = Convert.ToInt32(Math.Round(cpuCounter.NextValue()))
+                        },
+                        Ram = new Ram
+                        {
+                            Used = Math.Round(ramCounter.NextValue()),
+                            Max = GetPhysicalMemory()
+                        }
                     },
-                    Ram = new Ram
-                    {
-                        Used = Math.Round(ramCounter.NextValue()),
-                        Max = GetPhysicalMemory()
-                    }
+                    Timestamp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
                 });
 
                 client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
