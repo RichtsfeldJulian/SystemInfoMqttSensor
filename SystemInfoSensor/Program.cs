@@ -10,6 +10,7 @@ namespace SystemInfoSensor
     class Program
     {
         private const string TOPIC = "systemInfo";
+        private const string ALARMTOPIC = "alarmInfo";
 
         private static PerformanceCounter cpuCounter;
         private static PerformanceCounter ramCounter;
@@ -63,8 +64,15 @@ namespace SystemInfoSensor
                             Max = GetPhysicalMemory()
                         }
                     },
-                    Timestamp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")
+                    Timestamp = DateTime.Now
                 });
+
+               /* if (cpuCounter.NextValue() > 90)
+                {
+                    string alarmString = JsonConvert.SerializeObject("Achtung CPU-Auslastung über 90%");
+                    client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE,
+                        false);
+                }*/
 
                 client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
             }

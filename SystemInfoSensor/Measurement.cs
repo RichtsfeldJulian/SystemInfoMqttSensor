@@ -7,6 +7,6 @@ namespace SystemInfoSensor
     class Measurement
     {
         public SystemInfo SystemInfo { get; set; }
-        public string Timestamp { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }
