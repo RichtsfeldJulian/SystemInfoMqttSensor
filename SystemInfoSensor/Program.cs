@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using Newtonsoft.Json;
 using uPLibrary.Networking.M2Mqtt;
@@ -33,11 +34,16 @@ namespace SystemInfoSensor
             return Convert.ToInt32(Math.Round(physicalMemory));
 
         }
+
+        
         static void Main(string[] args)
         {
+            Disconnect.HandlerRoutine hr = new Disconnect.HandlerRoutine(Disconnect.InspectControlType);
+            Disconnect.SetConsoleCtrlHandler(hr, true);
             InitialisePerformanceCounter();
             MqttClient client = new MqttClient("185.239.238.179");
             byte code = client.Connect(Guid.NewGuid().ToString());
+            client.ConnectionClosed += Disconnect.Client_ConnectionClosed;   
 
             while (true)
             {
@@ -68,14 +74,15 @@ namespace SystemInfoSensor
                 });
 
                if (cpuCounter.NextValue() > 90)
-                {
-                    string alarmString = JsonConvert.SerializeObject(new Warning
-                    {
-                        Name = Environment.MachineName,
-                        Description = "Achtung! CPU-Auslastung über 90% !"
-                    });
-                    client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
-                }
+               {
+                   string alarmString = JsonConvert.SerializeObject(new Warning
+                   {
+                       Name = Environment.MachineName,
+                       Description = "Achtung! CPU-Auslastung über 90% !"
+                   });
+                   client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+               }
+
                client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
             }
         }
