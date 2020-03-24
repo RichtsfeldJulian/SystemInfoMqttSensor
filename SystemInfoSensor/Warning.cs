@@ -7,6 +7,6 @@ namespace SystemInfoSensor
     class Warning
     {
         public string Name { get; set; }
-        public string Message { get; set; }
+        public string Description { get; set; }
     }
 }

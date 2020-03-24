@@ -72,12 +72,11 @@ namespace SystemInfoSensor
                     string alarmString = JsonConvert.SerializeObject(new Warning
                     {
                         Name = Environment.MachineName,
-                        Message = "Achtung! CPU-Auslastung über 90% !"
+                        Description = "Achtung! CPU-Auslastung über 90% !"
                     });
                     client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
                 }
-
-                client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+               client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
             }
         }
     }
