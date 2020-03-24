@@ -67,12 +67,15 @@ namespace SystemInfoSensor
                     Timestamp = DateTime.Now
                 });
 
-               /* if (cpuCounter.NextValue() > 90)
+               if (cpuCounter.NextValue() > 90)
                 {
-                    string alarmString = JsonConvert.SerializeObject("Achtung CPU-Auslastung über 90%");
-                    client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE,
-                        false);
-                }*/
+                    string alarmString = JsonConvert.SerializeObject(new Warning
+                    {
+                        Name = Environment.MachineName,
+                        Message = "Achtung! CPU-Auslastung über 90% !"
+                    });
+                    client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+                }
 
                 client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
             }
