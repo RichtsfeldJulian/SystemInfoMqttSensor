@@ -5,6 +5,10 @@ using System.Text;
 using Newtonsoft.Json;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SystemInfoSensor
 {
@@ -17,6 +21,7 @@ namespace SystemInfoSensor
         private static PerformanceCounter ramCounter;
         private static PerformanceCounter frequencyCounter;
         private static PerformanceCounter powerCounter;
+        private static MQQTClient client =  new MQQTClient("185.239.238.179");
 
         static void InitialisePerformanceCounter()
         {
@@ -32,18 +37,14 @@ namespace SystemInfoSensor
             var installedMemory = gcMemoryInfo.TotalAvailableMemoryBytes;
             double physicalMemory = (double)installedMemory / 1048576.0;
             return Convert.ToInt32(Math.Round(physicalMemory));
-
         }
 
         
         static void Main(string[] args)
         {
-            Disconnect.HandlerRoutine hr = new Disconnect.HandlerRoutine(Disconnect.InspectControlType);
-            Disconnect.SetConsoleCtrlHandler(hr, true);
             InitialisePerformanceCounter();
-            MqttClient client = new MqttClient("185.239.238.179");
-            byte code = client.Connect(Guid.NewGuid().ToString());
-            client.ConnectionClosed += Disconnect.Client_ConnectionClosed;   
+            _handler += new EventHandler(Handler);
+            SetConsoleCtrlHandler(_handler, true);
 
             while (true)
             {
@@ -80,11 +81,47 @@ namespace SystemInfoSensor
                        Name = Environment.MachineName,
                        Description = "Achtung! CPU-Auslastung über 90% !"
                    });
-                   client.Publish(ALARMTOPIC, Encoding.UTF8.GetBytes(alarmString), MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+                   client.Publish(ALARMTOPIC,alarmString);
+                    Thread.Sleep(1000);
                }
-
-               client.Publish(TOPIC, Encoding.UTF8.GetBytes(payload) , MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, false);
+               client.Publish(TOPIC,payload);
             }
         }
+        [DllImport("Kernel32")]
+        private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
+
+        private delegate bool EventHandler(CtrlType sig);
+        static EventHandler _handler;
+
+        private static bool Handler(CtrlType sig)
+        {
+            string machineName = JsonConvert.SerializeObject(new
+            {
+                Name = Environment.MachineName,
+            });
+            switch (sig)
+            {
+                case CtrlType.CTRL_C_EVENT:
+                    client.Publish("connectionClosed", machineName);
+                    break;
+                case CtrlType.CTRL_LOGOFF_EVENT:
+                    client.Publish("connectionClosed", machineName);
+                    break;
+                case CtrlType.CTRL_SHUTDOWN_EVENT:
+                    client.Publish("connectionClosed", machineName);
+                    break;
+                case CtrlType.CTRL_CLOSE_EVENT:
+                    client.Publish("connectionClosed", machineName); 
+                    break;
+                case CtrlType.CTRL_BREAK_EVENT:
+                    client.Publish("connectionClosed", machineName);
+                    break;
+                default:
+                    return false;
+            }
+            return true;
+        }
+
+
     }
 }
