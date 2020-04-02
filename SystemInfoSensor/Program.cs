@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
 using Newtonsoft.Json;
-using uPLibrary.Networking.M2Mqtt;
-using uPLibrary.Networking.M2Mqtt.Messages;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace SystemInfoSensor
 {
     class Program
     {
-        private const string TOPIC = "systemInfo";
-        private const string ALARMTOPIC = "alarmInfo";
+        private const string Topic = "systemInfo";
+        private const string AlarmTopic = "alarmInfo";
 
         private static PerformanceCounter cpuCounter;
         private static PerformanceCounter ramCounter;
@@ -85,10 +79,10 @@ namespace SystemInfoSensor
                         Name = Environment.MachineName,
                         Description = "Achtung! CPU-Auslastung über 90% !"
                     });
-                    client.Publish(ALARMTOPIC,alarmString);
+                    client.Publish(AlarmTopic,alarmString);
                     Thread.Sleep(1000);
                 }
-                client.Publish(TOPIC,payload);
+                client.Publish(Topic,payload);
             }
         }
 
