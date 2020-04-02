@@ -23,6 +23,7 @@ namespace SystemInfoSensor
         private static PerformanceCounter powerCounter;
         private static MQQTClient client =  new MQQTClient("185.239.238.179");
 
+        //Auslesen der Systemdaten über die PerformanceCounter
         static void InitialisePerformanceCounter()
         {
             cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
@@ -31,6 +32,7 @@ namespace SystemInfoSensor
             powerCounter = new PerformanceCounter("Processor information", "% Processor performance", "_Total");
         }
 
+        //Berechnen des RAM's
         static int GetPhysicalMemory()
         {
             var gcMemoryInfo = GC.GetGCMemoryInfo();
@@ -55,6 +57,7 @@ namespace SystemInfoSensor
 
                 System.Threading.Thread.Sleep(1000);
 
+                //Zusammenstellen des Payloads mit den Daten des Systems
                 string payload = JsonConvert.SerializeObject(new Measurement
                 {
                     SystemInfo = new SystemInfo { 
@@ -74,19 +77,22 @@ namespace SystemInfoSensor
                     Timestamp = DateTime.Now
                 });
 
-               if (cpuCounter.NextValue() > 90)
-               {
-                   string alarmString = JsonConvert.SerializeObject(new Warning
-                   {
-                       Name = Environment.MachineName,
-                       Description = "Achtung! CPU-Auslastung über 90% !"
-                   });
-                   client.Publish(ALARMTOPIC,alarmString);
+                //Sollte die CPU-Auslastung über 90% betragen, wird eine Warning-Nachricht gesendet.
+                if (cpuCounter.NextValue() > 90)
+                {
+                    string alarmString = JsonConvert.SerializeObject(new Warning
+                    {
+                        Name = Environment.MachineName,
+                        Description = "Achtung! CPU-Auslastung über 90% !"
+                    });
+                    client.Publish(ALARMTOPIC,alarmString);
                     Thread.Sleep(1000);
-               }
-               client.Publish(TOPIC,payload);
+                }
+                client.Publish(TOPIC,payload);
             }
         }
+
+        //Sollte der Sensor geschlossen werden, wird ein Event getriggerd, der Sensor meldet sich ab und sendet einen letzte Nachricht mit dem Maschinennamen.
         [DllImport("Kernel32")]
         private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
 
@@ -121,7 +127,5 @@ namespace SystemInfoSensor
             }
             return true;
         }
-
-
     }
 }
