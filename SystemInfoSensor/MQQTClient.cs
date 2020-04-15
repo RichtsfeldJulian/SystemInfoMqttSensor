@@ -15,7 +15,7 @@ namespace SystemInfoSensor
         public MQQTClient(string ip)
         {
             _client = new MqttClient(ip);
-            _client.Connect(new Guid().ToString());
+            _client.Connect( Guid.NewGuid().ToString());
         }
 
         public void CloseConnection()
