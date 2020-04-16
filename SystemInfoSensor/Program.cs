@@ -71,17 +71,6 @@ namespace SystemInfoSensor
                     Timestamp = DateTime.Now
                 });
 
-                //Sollte die CPU-Auslastung über 90% betragen, wird eine Warning-Nachricht gesendet.
-                if (cpuCounter.NextValue() > 90)
-                {
-                    string alarmString = JsonConvert.SerializeObject(new Warning
-                    {
-                        Name = Environment.MachineName,
-                        Description = "Achtung! CPU-Auslastung über 90% !"
-                    });
-                    client.Publish(AlarmTopic,alarmString);
-                    Thread.Sleep(1000);
-                }
                 client.Publish(Topic,payload);
             }
         }
