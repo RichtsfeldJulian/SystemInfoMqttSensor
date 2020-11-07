@@ -16,6 +16,7 @@ namespace SystemInfoSensor
         private static PerformanceCounter frequencyCounter;
         private static PerformanceCounter powerCounter;
         private static MQQTClient client =  new MQQTClient("185.239.238.179");
+        private static PubSubClient pubSubClient = new PubSubClient();
 
         //Auslesen der Systemdaten über die PerformanceCounter
         static void InitialisePerformanceCounter()
@@ -36,7 +37,7 @@ namespace SystemInfoSensor
         }
 
         
-        static void Main(string[] args)
+        static async System.Threading.Tasks.Task Main(string[] args)
         {
             InitialisePerformanceCounter();
             _handler += new EventHandler(Handler);
@@ -70,7 +71,7 @@ namespace SystemInfoSensor
                     },
                     Timestamp = DateTime.Now
                 });
-
+                await pubSubClient.PublishMessagesAsync(Topic,payload);
                 client.Publish(Topic,payload);
             }
         }
