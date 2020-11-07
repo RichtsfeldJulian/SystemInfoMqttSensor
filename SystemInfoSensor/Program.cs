@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using System.Threading;
+using System.Threading.Tasks;
+using Google.Cloud.PubSub.V1;
 
 namespace SystemInfoSensor
 {
@@ -37,7 +39,7 @@ namespace SystemInfoSensor
         }
 
         
-        static async System.Threading.Tasks.Task Main(string[] args)
+        static async Task Main(string[] args)
         {
             InitialisePerformanceCounter();
             _handler += new EventHandler(Handler);
@@ -83,6 +85,12 @@ namespace SystemInfoSensor
         private delegate bool EventHandler(CtrlType sig);
         static EventHandler _handler;
 
+        private static async Task publishConnectionClosed(string machineName)
+        {
+            client.Publish("connectionClosed", machineName);
+            await pubSubClient.PublishMessagesAsync("connectionClosed", machineName);
+        }
+
         private static bool Handler(CtrlType sig)
         {
             string machineName = JsonConvert.SerializeObject(new
@@ -92,19 +100,29 @@ namespace SystemInfoSensor
             switch (sig)
             {
                 case CtrlType.CTRL_C_EVENT:
-                    client.Publish("connectionClosed", machineName);
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
+                    publishConnectionClosed(machineName);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                     break;
                 case CtrlType.CTRL_LOGOFF_EVENT:
-                    client.Publish("connectionClosed", machineName);
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
+                    publishConnectionClosed(machineName);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                     break;
                 case CtrlType.CTRL_SHUTDOWN_EVENT:
-                    client.Publish("connectionClosed", machineName);
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
+                    publishConnectionClosed(machineName);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                     break;
                 case CtrlType.CTRL_CLOSE_EVENT:
-                    client.Publish("connectionClosed", machineName); 
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
+                    publishConnectionClosed(machineName);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                     break;
                 case CtrlType.CTRL_BREAK_EVENT:
-                    client.Publish("connectionClosed", machineName);
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
+                    publishConnectionClosed(machineName);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                     break;
                 default:
                     return false;
