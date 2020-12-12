@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Cloud.PubSub.V1;
-using Grpc.Core;
 
 namespace SystemInfoSensor
 {
